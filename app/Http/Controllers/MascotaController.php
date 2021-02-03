@@ -95,7 +95,7 @@ class MascotaController extends Controller
      */
     public function show($id)
     {
-        //
+        return response()->json(Mascota::find($id));
     }
 
     /**
