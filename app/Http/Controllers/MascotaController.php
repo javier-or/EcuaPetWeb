@@ -118,7 +118,49 @@ class MascotaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
+        $result = Array(
+            "status"=>0
+        );
+
+        try {
+            $mascota = Mascota::find($id);
+
+            $mascota->nombre = $request->get("nombre");
+            $mascota->edad_anios = $request->get("edad_anios");
+            $mascota->edad_meses = $request->get("edad_meses");
+            $mascota->raza = $request->get("raza");
+            $mascota->genero = $request->get("genero");
+            $mascota->color = $request->get("color");
+            $mascota->alergias = $request->get("alergias");
+            $mascota->peso = $request->get("peso");
+            $mascota->descripcion = $request->get("descripcion");
+
+            $image = base64_decode($request->get("image"));
+
+            if(!is_null($image)){
+               
+                $path = public_path().'/'.$mascota->foto;
+                $result = file_put_contents($path,$image);
+                
+            }
+
+          
+            /**
+            * QR CODE
+             */
+            $path2 = 'img/qrs/mascota_'.$mascota->id.'.png';
+
+            QrCode::format('png')->size(200)->generate("http://".env("IP_PETAPP")."/my-pet/".$mascota->id,$path2);
+
+            $mascota->qr_code = $path2;
+            $mascota->save();
+
+        }catch(\Exception $e){
+            return response()->json(["error"=>true,"msg"=>"Error al guardar datos"]);
+        }
+        return response()->json(["error"=>false,"msg"=>"Mascota Actualizada correctamente!","idMascota"=>$mascota->id,"nombre"=>$mascota->nombre]);
+
     }
 
     /**

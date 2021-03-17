@@ -28,6 +28,7 @@ Route::resource('/apiv1/user','UsersController');
  */
 Route::resource('/apiv1/mascota','MascotaController');
 
+
 Route::group(['middleware'=>'cors'],function (){
     Route::post('/apiv1/login','ApiAuthController@userAuth');
 });
